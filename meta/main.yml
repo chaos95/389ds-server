@@ -1,6 +1,6 @@
 ---
 galaxy_info:
-  author: lvps
+  author: chaos95
   role_name: 389ds_server
   description: >
     Installs 389DS LDAP server. Also configures TLS, logging, custom schema
@@ -8,6 +8,9 @@ galaxy_info:
   license: Apache2
   min_ansible_version: 2.10
   platforms:
+    - name: Fedora
+      versions:
+        - 33
     - name: EL
       versions:
         - 7
