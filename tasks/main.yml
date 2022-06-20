@@ -85,6 +85,7 @@
 
 # Required also to enforce TLS as TLS must be enabled beforehand (requiring a restart).
 - name: "Restart {{ dirsrv_serverid }} to enable TLS, authentication, plugins"
+  tags: [ dirsrv_tls, dirsrv_cert, dirsrv_schema ]  # Needed for all these tags
   service:
     name: "dirsrv@{{ dirsrv_serverid }}"
     state: restarted
@@ -107,6 +108,7 @@
   register: dirsrv_restart_condition_has_restarted
 
 - name: "Reload schema on {{ dirsrv_serverid }}"
+  tags: dirsrv_schema
   ldap_entry:
     server_uri: "{{ dirsrv_server_uri }}"
     validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
@@ -120,7 +122,7 @@
       cn: ansible-managed schema reload
       schemadir: "/etc/dirsrv/slapd-{{ dirsrv_serverid }}/schema/"
     state: present
-  when: "not dirsrv_restart_condition_has_restarted and (\
+  when: "not dirsrv_restart_condition_has_restarted|default(false) and (\
         (dirsrv_restart_condition_schema_reload_1 is defined and dirsrv_restart_condition_schema_reload_1.changed) or\
         (dirsrv_restart_condition_schema_reload_2 is defined and dirsrv_restart_condition_schema_reload_2.changed)\
         )"
